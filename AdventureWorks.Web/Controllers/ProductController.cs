@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AdventureWorks.Web.Models;
+using Microsoft.Extensions.Logging;
 
 namespace AdventureWorks.Web.Controllers
 {
@@ -14,10 +15,12 @@ namespace AdventureWorks.Web.Controllers
     public class ProductController : ControllerBase
     {
         private readonly AdventureWorks2017Context _context;
+        private readonly ILogger _logger;
 
-        public ProductController(AdventureWorks2017Context context)
+        public ProductController(AdventureWorks2017Context context, ILogger<ProductController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Product
@@ -33,6 +36,7 @@ namespace AdventureWorks.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogError($"Method GetProduct, Error: {ModelState.ErrorCount}");
                 return BadRequest(ModelState);
             }
 
@@ -40,6 +44,7 @@ namespace AdventureWorks.Web.Controllers
 
             if (product == null)
             {
+                _logger.LogWarning($"Method GetProduct, Product not found: {id}");
                 return NotFound();
             }
 
@@ -52,6 +57,7 @@ namespace AdventureWorks.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogError($"Method PutProduct, Error: {ModelState.ErrorCount}");
                 return BadRequest(ModelState);
             }
 
@@ -66,8 +72,9 @@ namespace AdventureWorks.Web.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
+                _logger.LogError(ex.Message);
                 if (!ProductExists(id))
                 {
                     return NotFound();
@@ -111,10 +118,19 @@ namespace AdventureWorks.Web.Controllers
                 return NotFound();
             }
 
-            _context.Product.Remove(product);
-            await _context.SaveChangesAsync();
 
-            return Ok(product);
+            try
+            {
+                _context.Product.Remove(product);
+                await _context.SaveChangesAsync();
+
+                return Ok(product);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(error: ex.Message);
+            }
         }
 
         private bool ProductExists(int id)
