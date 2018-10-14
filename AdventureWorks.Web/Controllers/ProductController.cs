@@ -77,6 +77,7 @@ namespace AdventureWorks.Web.Controllers
                 _logger.LogError(ex.Message);
                 if (!ProductExists(id))
                 {
+                    _logger.LogWarning($"Method PutProduct, Product not found: {id}");
                     return NotFound();
                 }
                 else
