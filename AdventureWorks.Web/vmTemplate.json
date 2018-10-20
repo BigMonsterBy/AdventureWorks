@@ -8,7 +8,7 @@
     },
     "labName": {
       "type": "string",
-      "defaultValue": "aw-test-lab"
+      "defaultValue": "aw-test-lab-new"
     },
     "size": {
       "type": "string",
