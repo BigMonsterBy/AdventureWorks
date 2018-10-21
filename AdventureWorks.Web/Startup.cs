@@ -11,6 +11,7 @@ using Serilog;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.Azure;
 using Microsoft.Extensions.Logging;
+using AzureStorage;
 
 namespace AdventureWorks.Web
 {
@@ -43,6 +44,10 @@ namespace AdventureWorks.Web
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
             });
+
+            var azureName = Configuration.GetValue<string>("Azure:Name");
+            var azureKey = Configuration.GetValue<string>("Azure:Key");
+            services.AddScoped<IAzureService>(s => new AzureService(azureName, azureKey));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,8 +63,8 @@ namespace AdventureWorks.Web
                 app.UseHsts();
             }
 
-            //var setting = CloudConfigurationManager.GetSetting("AzureTable");
-            var storage = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=adventureworkslearn;AccountKey=Gt7BGeYt44nW4rUO5rwwV1a7e1noRV6TMbJoTwNazHeZKrnd/DKkVzy5rZOBlBOByHwVgHGUW58iDtewbwo5ew==;EndpointSuffix=core.windows.net");
+            var connectionString = Configuration.GetValue<string>("Azure:ConnectionString");
+            var storage = CloudStorageAccount.Parse(connectionString);
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
