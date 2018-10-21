@@ -113,15 +113,14 @@ namespace AdventureWorks.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var product = await _context.Product.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-
             try
             {
+                var product = await _context.Product.FindAsync(id);
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
                 _context.Product.Remove(product);
                 await _context.SaveChangesAsync();
 

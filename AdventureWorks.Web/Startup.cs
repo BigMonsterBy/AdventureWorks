@@ -8,6 +8,9 @@ using AdventureWorks.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Swagger;
 using Serilog;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.Azure;
+using Microsoft.Extensions.Logging;
 
 namespace AdventureWorks.Web
 {
@@ -43,7 +46,7 @@ namespace AdventureWorks.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -55,12 +58,13 @@ namespace AdventureWorks.Web
                 app.UseHsts();
             }
 
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .CreateLogger();
+            //var setting = CloudConfigurationManager.GetSetting("AzureTable");
+            var storage = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=adventureworkslearn;AccountKey=Gt7BGeYt44nW4rUO5rwwV1a7e1noRV6TMbJoTwNazHeZKrnd/DKkVzy5rZOBlBOByHwVgHGUW58iDtewbwo5ew==;EndpointSuffix=core.windows.net");
 
-            Log.Information("Application strting");
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.AzureTableStorageWithProperties(storage, storageTableName: "awapplog")
+                .CreateLogger();
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
