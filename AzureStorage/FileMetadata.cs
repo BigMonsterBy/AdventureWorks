@@ -14,8 +14,11 @@ namespace AzureStorage
         {
             var builder = new StringBuilder();
             builder.Append($"FileName:{Filename}");
+            builder.Append(Environment.NewLine);
             builder.Append($"Size:{Size}");
+            builder.Append(Environment.NewLine);
             builder.Append($"ModifiedDate:{UploadedDeate}");
+            builder.Append(Environment.NewLine);
             builder.Append($"StoringUri:{StoringUri}");
             return builder.ToString();
         }
