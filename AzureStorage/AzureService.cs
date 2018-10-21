@@ -28,6 +28,7 @@ namespace AzureStorage
             await container.CreateIfNotExistsAsync();
 
             var newBlob = container.GetAppendBlobReference(name);
+            newBlob.Properties.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             if (await newBlob.ExistsAsync())
             {
                 throw new Exception($"Blob {name} exists.");

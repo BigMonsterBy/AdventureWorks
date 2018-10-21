@@ -41,6 +41,7 @@ namespace AdventureWorks.Web.Controllers
                     {
                         _logger.LogInformation($"Uploading {formFile.FileName}");
                         await formFile.CopyToAsync(stream);
+                        stream.Position = 0;
                         var uri = await _azureService.AddBlobAsync(stream, formFile.FileName);
                         _logger.LogInformation($"{formFile.FileName} saved: {uri}");
 

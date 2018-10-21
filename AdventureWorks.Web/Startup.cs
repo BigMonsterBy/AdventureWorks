@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Swagger;
 using Serilog;
 using Microsoft.WindowsAzure.Storage;
-using Microsoft.Azure;
 using Microsoft.Extensions.Logging;
 using AzureStorage;
 
