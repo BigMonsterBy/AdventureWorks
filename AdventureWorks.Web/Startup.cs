@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using AdventureWorks.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Swagger;
-using Serilog;
 
 namespace AdventureWorks.Web
 {
@@ -54,13 +53,6 @@ namespace AdventureWorks.Web
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .CreateLogger();
-
-            Log.Information("Application strting");
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
