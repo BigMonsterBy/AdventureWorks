@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using AdventureWorks.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Swagger;
-using Serilog;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Logging;
 using AzureStorage;
@@ -64,11 +63,6 @@ namespace AdventureWorks.Web
 
             var connectionString = Configuration.GetValue<string>("Azure:ConnectionString");
             var storage = CloudStorageAccount.Parse(connectionString);
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .WriteTo.AzureTableStorageWithProperties(storage, storageTableName: "awapplog")
-                .CreateLogger();
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
