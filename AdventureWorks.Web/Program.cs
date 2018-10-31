@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Serilog;
 
 namespace AdventureWorks.Web
 {
@@ -13,7 +12,6 @@ namespace AdventureWorks.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseSerilog()
                 .UseStartup<Startup>();
     }
 }
