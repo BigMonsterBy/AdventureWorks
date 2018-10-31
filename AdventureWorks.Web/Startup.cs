@@ -61,9 +61,6 @@ namespace AdventureWorks.Web
                 app.UseHsts();
             }
 
-            var connectionString = Configuration.GetValue<string>("Azure:ConnectionString");
-            var storage = CloudStorageAccount.Parse(connectionString);
-
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
