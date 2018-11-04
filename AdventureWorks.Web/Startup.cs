@@ -10,6 +10,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Logging;
 using AzureStorage;
+using AzureSearch;
 
 namespace AdventureWorks.Web
 {
@@ -46,6 +47,10 @@ namespace AdventureWorks.Web
             var azureName = Configuration.GetValue<string>("Azure:Name");
             var azureKey = Configuration.GetValue<string>("Azure:Key");
             services.AddScoped<IAzureService>(s => new AzureService(azureName, azureKey));
+
+            var azureSearchName = Configuration.GetValue<string>("AzureSearch:Name");
+            var azureSearchKey = Configuration.GetValue<string>("AzureSearch:QueryKey");
+            services.AddScoped<IAzureSearchService>(s => new AzureSearchService(azureSearchName, azureSearchKey));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

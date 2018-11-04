@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AdventureWorks.Web.Models;
 using Microsoft.Extensions.Logging;
+using Models;
 
 namespace AdventureWorks.Web.Controllers
 {
