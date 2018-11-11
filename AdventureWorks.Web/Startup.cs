@@ -38,12 +38,12 @@ namespace AdventureWorks.Web
             var connection = this.Configuration.GetConnectionString("AdventureWorks2017Context");
             services.AddDbContext<AdventureWorks2017Context>(options => options.UseSqlServer(connection));
 
-            var azureName = Configuration.GetValue<string>("AzureStorage");
-            var azureKey = Configuration["adventureworkslearn"];
+            var azureName = Configuration.GetValue<string>("AzureStorage:Name");
+            var azureKey = Configuration.GetValue<string>("AzureStorage:Key");
             services.AddScoped<IAzureService>(s => new AzureService(azureName, azureKey));
 
-            var azureSearchName = Configuration.GetValue<string>("AzureSearch");
-            var azureSearchKey = Configuration["vs-search-service"];
+            var azureSearchName = Configuration.GetValue<string>("AzureSearch:Name");
+            var azureSearchKey = Configuration.GetValue<string>("AzureSearch:Key");
             services.AddScoped<IAzureSearchService>(s => new AzureSearchService(azureSearchName, azureSearchKey));
         }
 
@@ -69,14 +69,6 @@ namespace AdventureWorks.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-        }
-
-        public static async Task<string> GetAccessToken(string authority, string resource, string scope, ClientAssertionCertificate assertionCert)
-        {
-            var context = new AuthenticationContext(authority, TokenCache.DefaultShared);
-            var result = await context.AcquireTokenAsync(resource, assertionCert).ConfigureAwait(false);
-
-            return result.AccessToken;
         }
     }
 }
