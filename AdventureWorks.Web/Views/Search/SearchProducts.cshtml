@@ -1,0 +1,33 @@
+﻿@using Microsoft.Azure.Search.Models;
+@using Models;
+@model DocumentSearchResult<Product>
+@if (Model != null)
+{
+    @if (Model.Facets.Where(f => f.Value.Any()).Any())
+    {
+        <div style="float:left; width: 30%;">
+            <span>Available options:</span>
+            @foreach (var facet in Model.Facets)
+            {
+                @facet.Key
+                <text>(<a class="clear-facet">clear</a>)</text>
+                <ul style="list-style:none; padding: 0;">
+                    @foreach (var value in facet.Value)
+                    {
+                        <li><a class="facet" data-facet-name="@facet.Key" data-from="@value.From" data-to="@value.To" data-type="@value.Type">@value.Value</a> (@value.Count)</li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+    <div style="float:left; width: @(Model.Facets.Any() ? "70%" : "100%")">
+        <span>Found Products (first @Model.Results.Count from @Model.Count)</span>
+        @foreach (var product in Model.Results)
+        {
+            <p>
+                Name: @product.Document.Name
+                Color: @product.Document.Color
+            </p>
+        }
+    </div>
+}

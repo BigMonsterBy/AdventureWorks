@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Search</h2>
+<div style="width: 100%; align-content:center;">
+    Search for: @Html.TextBox("searchTerm")
+</div>
+
+<div style="width: 50%; float: left;">
+    <a id="searchProducts">Search products</a>
+    <div id="foundProducts">
+        No products to dispaly
+    </div>
+</div>
+
+<div style="width: 50%; float: left;">
+    <a id="searchDocuments">Search documents</a>
+    <div id="foundDocuments">
+        No documents to dispaly
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#searchProducts").on("click", function (event) {
+                event.preventDefault;
+                searchProducts(null);
+                return false;
+            });
+        });
+
+        $(function () {
+            $("#searchDocuments").on("click", function (event) {
+                event.preventDefault;
+                searchDocuments();
+                return false;
+            });
+        });
+
+        function searchDocuments() {
+            var data = { searchTerm: $("#searchTerm").val() };
+
+            $.ajax({
+                url: "@Url.Action("SearchDocuments")",
+                data: data,
+                success: (function (data) {
+                    $("#foundDocuments").html(data);
+                })
+            });
+        }
+
+        function searchProducts(facet) {
+            var data = { searchTerm: $("#searchTerm").val() };
+            if (facet !== null) {
+                data.facetName = facet.name;
+                data.facetType = facet.type;
+                data.facetValue = facet.value;
+            };
+
+            $.ajax({
+                url: "@Url.Action("SearchProducts")",
+                data: data,
+                success: (function (data) {
+                    $("#foundProducts").html(data);
+                })
+            });
+        }
+
+        $(document).on("click", ".facet", function (event) {
+            event.preventDefault;
+            var link = $(event.target);
+            var facet = {
+                name: link.data("facet-name"),
+                from: link.data("from"),
+                to: link.data("to"),
+                type: link.data("type"),
+                value: link.text()
+            };
+            console.log(facet);
+            searchProducts(facet);
+            return false;
+        });
+
+        $(document).on("click", ".clear-facet", function (event) {
+            event.preventDefault;
+            searchProducts(null);
+            return false;
+        });
+    </script>
+}
+

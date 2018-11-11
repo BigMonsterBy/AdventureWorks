@@ -11,12 +11,6 @@ namespace AdventureWorks.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IAzureSearchService _azureSearchService;
-
-        public HomeController(IAzureSearchService azureSearchService)
-        {
-            _azureSearchService = azureSearchService;
-        }
         public IActionResult Index()
         {
             return View();

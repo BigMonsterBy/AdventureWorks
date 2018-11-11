@@ -6,11 +6,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AdventureWorks.Web.Models;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Logging;
 using AzureStorage;
 using AzureSearch;
+using Microsoft.Azure.KeyVault;
+using System.Threading.Tasks;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
 namespace AdventureWorks.Web
 {
@@ -33,23 +34,16 @@ namespace AdventureWorks.Web
                     options.MinimumSameSitePolicy = SameSiteMode.None;
                 });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
             var connection = this.Configuration.GetConnectionString("AdventureWorks2017Context");
             services.AddDbContext<AdventureWorks2017Context>(options => options.UseSqlServer(connection));
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
-            });
-
-            var azureName = Configuration.GetValue<string>("Azure:Name");
-            var azureKey = Configuration.GetValue<string>("Azure:Key");
+            var azureName = Configuration.GetValue<string>("AzureStorage");
+            var azureKey = Configuration["adventureworkslearn"];
             services.AddScoped<IAzureService>(s => new AzureService(azureName, azureKey));
 
-            var azureSearchName = Configuration.GetValue<string>("AzureSearch:Name");
-            var azureSearchKey = Configuration.GetValue<string>("AzureSearch:QueryKey");
+            var azureSearchName = Configuration.GetValue<string>("AzureSearch");
+            var azureSearchKey = Configuration["vs-search-service"];
             services.AddScoped<IAzureSearchService>(s => new AzureSearchService(azureSearchName, azureSearchKey));
         }
 
@@ -69,19 +63,20 @@ namespace AdventureWorks.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                c.RoutePrefix = string.Empty;
-            });
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        public static async Task<string> GetAccessToken(string authority, string resource, string scope, ClientAssertionCertificate assertionCert)
+        {
+            var context = new AuthenticationContext(authority, TokenCache.DefaultShared);
+            var result = await context.AcquireTokenAsync(resource, assertionCert).ConfigureAwait(false);
+
+            return result.AccessToken;
         }
     }
 }

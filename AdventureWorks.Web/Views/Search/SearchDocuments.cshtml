@@ -1,0 +1,21 @@
+﻿@using Microsoft.Azure.Search.Models;
+@using Models;
+@using System.Net;
+@model DocumentSearchResult<WordDocument>
+@if (Model != null)
+{
+<div style="float:left;">
+    <span>Found Documents</span>
+    @foreach (var result in Model.Results)
+        {
+    var path = WebUtility.UrlDecode(System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(result.Document.StoragePath)));
+    <div>
+        <p>Name: @result.Document.StorageName</p>
+        <p>Path: <a href="@path">@path</a></p>
+        <p>Modified: @result.Document.LastModified</p>
+        <p>Words: @result.Document.WordCount</p>
+        <p>Size:  @result.Document.Size</p>
+    </div>
+        }
+</div>
+}
